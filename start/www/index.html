@@ -16,19 +16,13 @@
 		<main class="container" ng-app="MyApp" ng-controller="MyCtrl">
 
 			<!-- component 1 -->
-			<header doug=" 'CA Tech is cool!' "></header>
+			<header text="listHeader"></header>
 
 			<!-- component 2 -->
-			<ul>
-				<li ng-repeat="color in sortedColors">{{$id}} {{color}}</li>
-			</ul>
+			<item-list items="sortedColors"></item-list>
 
 			<!-- component 3 -->
-			<div>
-				<label>New Color:</label>
-				<input type="text" ng-model="newColor">
-				<button type="button" ng-click="addColor()">Add Color</button>
-			</div>
+			<color-form new-color-added="addColor(newColor)"></color-form>
 
 		</main>
 		<script src="js/ng/angular.js"></script>
@@ -51,17 +45,54 @@
 					};
 
 				})
-				.component("header", {
-					template: "<h1>{{$ctrl.doug}}</h1>",
-					bindings: {
-						doug: "<"
-					}
+				// .directive("header", function() {
 
+				// 	// directive definition object
+				// 	return {
+				// 		template: "<h1>{{$ctrl.text}}</h1>",
+				// 		controllerAs: "$ctrl",
+				// 		controller: function() { },
+				// 		bindToController: true,
+				// 		scope: {
+				// 			text: "<"
+				// 		}
+				// 	};
+				// })
+				.component("header", {
+					template: "<h1>{{$ctrl.text}}</h1>",
+					bindings: {
+						text: "<"
+					}
+				})
+				.component("itemList", {
+					template: `<ul>
+						<li ng-repeat="item in $ctrl.items">{{item}}</li>
+					</ul>`,
+					bindings: {
+						items: "<"
+					}
+				})
+				.component("colorForm", {
+					template: `<div>
+						<label>New Color:</label>
+						<input type="text" ng-model="$ctrl.newColor">
+						<button type="button" ng-click="$ctrl.addColorButton()">Add Color</button>
+					</div>`,
+					controller: function() {
+
+						this.addColorButton = () => {
+							this.newColorAdded({ newColor: this.newColor });
+						};
+
+					},
+					bindings: {
+						newColorAdded: "&"
+					}					
 				})
 				.controller("MyCtrl", function($scope, $log, colorsSvc) {
 
-					$scope.addColor = function() {
-						colorsSvc.insert($scope.newColor);
+					$scope.addColor = function(newColor) {
+						colorsSvc.insert(newColor);
 						$scope.colors = colorsSvc.getAll();
 					};
 
