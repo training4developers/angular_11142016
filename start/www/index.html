@@ -50,6 +50,20 @@
 			'use strict';
 
 			angular.module("MyApp", [])
+				.factory("colorsSvc", function() {
+
+					var colors = ['blue','yellow','red','white','brown','green','orange'];
+
+					return {
+						getAll: function() {
+							return colors;
+						},
+						insert: function(newColor) {
+							colors = colors.concat(newColor);
+						}
+					};
+
+				})
 				.filter("DoCheck", function() {
 
 					return function(value) {
@@ -58,10 +72,11 @@
 					}
 
 				})
-				.controller("MyCtrl", function($scope, $log) {
+				.controller("MyCtrl", function($scope, $log, colorsSvc) {
 
 					$scope.addColor = function() {
-						$scope.colors = $scope.colors.concat($scope.newColor);
+						colorsSvc.insert($scope.newColor);
+						$scope.colors = colorsSvc.getAll();
 					};
 
 					var lastColors;
@@ -70,6 +85,8 @@
 						configurable: true,
 						enumerable: true,
 						get: function() {
+
+							$scope.colors = colorsSvc.getAll();
 
 							if (lastColors !== $scope.colors) {
 								console.log('ran change detection');
