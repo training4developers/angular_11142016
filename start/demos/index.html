@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Angular.js Demo App</title>
+		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+		<link href="css/site.css" rel="stylesheet">
+		<base href="/">
+	</head>
+
+	<body>
+
+		<main class="container" ng-app="MyApp">
+			<input type="checkbox" ng-model="showMe"> Show Me
+			<div ng-if="showMe">
+				<list-box items="colors" new-color="colorForm.newColor" delete-item="deleteColor(item)">
+					<header>My Colors</header>
+					<span>{{colors.length}} colors</span>
+				</list-box>
+				<div>
+					New Color: <input type="text" ng-model="colorForm.newColor" ng-keydown="addColor($event)">
+				</div>
+			</div>
+		</main>
+
+		<script src="js/ng/angular.js"></script>
+		<script>
+
+			'use strict';
+
+			angular.module("MyApp", [])
+				.filter('myDoCheck', function() {
+
+					return function (value) {
+						console.log('change detection ran');
+						return value;
+					};
+
+				})
+				.component("listBox", {
+					transclude: {
+						header: 'header',
+						footer: 'span'
+					},
+					template: `<ng-transclude ng-transclude-slot="header"></ng-transclude>
+					<ul><li ng-repeat="item in $ctrl.items | myDoCheck">
+						{{item}} <a class="glyphicon glyphicon-remove" ng-click="$ctrl.delItem(item)"></a>
+					</li></ul><div>
+					Next Color: {{$ctrl.newColor}}</div>
+					<ng-transclude ng-transclude-slot="footer"></ng-transclude>`,
+					bindings: {
+						"items": "<",
+						"newColor": "<",
+						"deleteItem": "&"
+					},
+					controller: function() {
+
+						this.delItem = function(item) {
+							this.deleteItem({ item })
+						};
+
+						this.$onInit = function() {
+							console.log('on init');
+							console.log(arguments);
+						};
+
+						this.$onDestroy = function() {
+							console.log('on destroy');
+							console.log(arguments);
+						};
+
+						this.$doCheck = function() {
+							console.log('do check');
+							console.log(arguments);
+						};
+
+						this.$onChanges = function() {
+							console.log('on changes');
+							console.log(arguments);
+						};
+
+						this.$postLink = function() {
+							console.log('post link');
+							console.log(arguments);
+						};
+
+
+					}
+				})
+				.run(function($rootScope) {
+					$rootScope.colors = ['red','white','blue'];
+
+					$rootScope.colorForm = {};
+
+					$rootScope.deleteColor = function(color) {
+						console.log('delete color clicked');
+						$rootScope.colors = $rootScope.colors.filter(c => c != color);
+					}
+
+					$rootScope.addColor = function(e) {
+
+						if (e.keyCode === 13) {
+							$rootScope.colors.push($rootScope.colorForm.newColor);
+							$rootScope.colorForm.newColor = '';
+						}
+					};
+
+				});
+
+		</script>
+
+	</body>
+
+</html>

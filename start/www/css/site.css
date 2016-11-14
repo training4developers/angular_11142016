@@ -1,1 +1,5 @@
-
+a.glyphicon { color: black; vertical-align: middle; }
+a.glyphicon:hover { 
+	text-decoration: none;
+	color:blue;
+}
