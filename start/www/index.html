@@ -19,7 +19,7 @@
 				<h1>{{header}}</h1>
 
 				<ul>
-					<li ng-repeat="color in colors">{{$id}} {{color}}</li>
+					<li ng-repeat="color in sortedColors">{{$id}} {{color}}</li>
 				</ul>
 				<div>
 					<label>New Color:</label>
@@ -50,11 +50,37 @@
 			'use strict';
 
 			angular.module("MyApp", [])
+				.filter("DoCheck", function() {
+
+					return function(value) {
+						console.log('change detection ran');
+						return value;
+					}
+
+				})
 				.controller("MyCtrl", function($scope, $log) {
 
 					$scope.addColor = function() {
-						$scope.colors.push($scope.newColor);
+						$scope.colors = $scope.colors.concat($scope.newColor);
 					};
+
+					var lastColors;
+
+					Object.defineProperty($scope, "sortedColors", {
+						configurable: true,
+						enumerable: true,
+						get: function() {
+
+							if (lastColors !== $scope.colors) {
+								console.log('ran change detection');
+								$scope.colors.sort();
+								lastColors = $scope.colors;
+							}
+
+							return $scope.colors;
+
+						}
+					});
 
 
 
