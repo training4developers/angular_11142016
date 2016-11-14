@@ -13,21 +13,34 @@
 
 	<body>
 
-		<main class="container" ng-app="MyApp" ng-controller="MyCtrl">
+		<main class="container" ng-app="MyApp">
 
-			<!-- component 1 -->
-			<header doug=" 'CA Tech is cool!' "></header>
+			<div ng-controller="MyCtrl">
+				<h1>{{header}}</h1>
 
-			<!-- component 2 -->
-			<ul>
-				<li ng-repeat="color in sortedColors">{{$id}} {{color}}</li>
-			</ul>
+				<ul>
+					<li ng-repeat="color in sortedColors">{{$id}} {{color}}</li>
+				</ul>
+				<div>
+					<label>New Color:</label>
+					<input type="text" ng-model="newColor">
+					<button type="button" ng-click="addColor()">Add Color</button>
+				</div>
 
-			<!-- component 3 -->
-			<div>
-				<label>New Color:</label>
-				<input type="text" ng-model="newColor">
-				<button type="button" ng-click="addColor()">Add Color</button>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Make</th>
+							<th>Model</th>
+							<th>Year</th>
+							<th>Color</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
 			</div>
 
 		</main>
@@ -51,10 +64,11 @@
 					};
 
 				})
-				.component("header", {
-					template: "<h1>{{$ctrl.doug}}</h1>",
-					bindings: {
-						doug: "<"
+				.filter("DoCheck", function() {
+
+					return function(value) {
+						console.log('change detection ran');
+						return value;
 					}
 
 				})
@@ -86,11 +100,16 @@
 					});
 
 
-					$scope.listHeader = "List of Colors";
+
+					$log.log('Thanksgiving is almost here!');
+					console.dir($scope);
+					$scope.header = "List of Colors";
 					$scope.colors = ['blue','yellow','red','white','brown','green','orange'];
+
 					$scope.cars = [
-						{ make: 'Kia', model: 'Sportage', color: 'teal', year: 2015, price: 10000 }
-					];
+						{ make: 'Kia', model: 'Sportage', color: 'teal', year: 2015, price: 10000 },
+
+					]
 
 				});
 
