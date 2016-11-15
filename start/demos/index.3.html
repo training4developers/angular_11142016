@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Angular.js Demo App</title>
+		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+		<link href="css/site.css" rel="stylesheet">
+		<base href="/">
+	</head>
+
+	<body>
+
+		<main class="container" ng-app="MyApp" ng-controller="MyCtrl">
+
+			<!-- component 1 -->
+			<header text="listHeader"></header>
+
+			<!-- component 2 -->
+			<item-list items="sortedColors"></item-list>
+
+			<input type="text" ng-model="somethingElse">
+
+			<!-- component 3 -->
+			<color-form new-color-added="addColor(newColor, $event, somethingElse)"></color-form>
+
+		</main>
+		<script src="js/ng/angular.js"></script>
+		<script>
+
+			'use strict';
+
+			angular.module("MyApp", [])
+				.factory("colorsSvc", function() {
+
+					var colors = ['blue','yellow','red','white','brown','green','orange'];
+
+					return {
+						getAll: function() {
+							return colors;
+						},
+						insert: function(newColor) {
+							colors = colors.concat(newColor);
+						}
+					};
+
+				})
+				// .directive("header", function() {
+
+				// 	// directive definition object
+				// 	return {
+				// 		template: "<h1>{{$ctrl.text}}</h1>",
+				// 		controllerAs: "$ctrl",
+				// 		controller: function() { },
+				// 		bindToController: true,
+				// 		scope: {
+				// 			text: "<"
+				// 		}
+				// 	};
+				// })
+				.component("header", {
+					template: "<h1>{{$ctrl.text}}</h1>",
+					bindings: {
+						text: "<"
+					}
+				})
+				.component("itemList", {
+					template: `<ul>
+						<li ng-repeat="item in $ctrl.items">{{item}}</li>
+					</ul>`,
+					bindings: {
+						items: "<"
+					}
+				})
+				.component("colorForm", {
+					template: `<div>
+						<label>New Color:</label>
+						<input type="text" ng-model="$ctrl.newColor">
+						<button type="button" ng-click="$ctrl.addColorButton()">Add Color</button>
+					</div>`,
+					controller: function() {
+
+						this.addColorButton = () => {
+							this.newColorAdded({ newColor: this.newColor });
+						};
+
+					},
+					bindings: {
+						newColorAdded: "&"
+					}					
+				})
+				.controller("MyCtrl", function($scope, $log, colorsSvc) {
+
+					$scope.addColor = function(newColor) {
+						colorsSvc.insert(newColor);
+						$scope.colors = colorsSvc.getAll();
+					};
+
+					var lastColors;
+
+					Object.defineProperty($scope, "sortedColors", {
+						configurable: true,
+						enumerable: true,
+						get: function() {
+
+							$scope.colors = colorsSvc.getAll();
+
+							if (lastColors !== $scope.colors) {
+								console.log('ran change detection');
+								$scope.colors.sort();
+								lastColors = $scope.colors;
+							}
+
+							return $scope.colors;
+
+						}
+					});
+
+
+					$scope.listHeader = "List of Colors";
+					$scope.colors = ['blue','yellow','red','white','brown','green','orange'];
+					$scope.cars = [
+						{ make: 'Kia', model: 'Sportage', color: 'teal', year: 2015, price: 10000 }
+					];
+
+				});
+
+		</script>
+
+	</body>
+
+</html>
