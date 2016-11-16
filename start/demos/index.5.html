@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Angular.js Demo App</title>
+		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+		<link href="css/site.css" rel="stylesheet">
+		<base href="/">
+	</head>
+
+	<body>
+
+		<main class="container" ng-app="MyApp">
+
+			<demo-left></demo-left>
+			<demo-right></demo-right>
+
+		</main>
+		<script src="js/ng/angular.js"></script>
+		<script>
+
+			'use strict';
+
+			angular.module("MyApp", [])
+				.factory("EventChannel", function() {
+
+					var events = {};
+
+					return {
+						trigger: function(eventName, eventData) {
+
+							if (events[eventName]) {
+								events[eventName].forEach(function(eventHandler) {
+									eventHandler(eventData);
+								});
+							}
+
+						},
+						on: function(eventName, eventHandler) {
+
+							if (!events[eventName]) {
+								events[eventName] = [];
+							}
+
+							events[eventName].push(eventHandler);
+
+						}
+					};
+
+				})
+				.component("demoLeft", {
+					template: `<button type='button' ng-click='$ctrl.clickMe()'>Click Me!</button>`,
+					controller: function(EventChannel) {
+
+						this.clickMe = () => {
+
+							EventChannel.trigger('ClickMe', {
+								message: 'I clicked the button'
+							});
+
+						};
+
+					}
+
+				})
+				.component("demoRight", {
+					template: `<span>{{$ctrl.message}}</span>`,
+					controller: function(EventChannel) {
+
+						EventChannel.on('ClickMe', (data) => {
+							this.message = data.message;
+						});
+
+					}
+
+				})
+
+
+		</script>
+
+	</body>
+
+</html>

@@ -14,129 +14,47 @@
 	<body>
 
 		<main class="container" ng-app="MyApp">
+
+		
+			<list-box>
+				<header>
+					<h1>List of Colors</h1>
+				</header>
+				<footer>
+					<small>{{numOfColors}} colors</small>
+				</footer>
+			</list-box>
+
 		</main>
-		<!--<script src="js/ng/angular.js"></script>-->
+		<script src="js/ng/angular.js"></script>
 		<script>
 
 			'use strict';
 
-			
+			angular.module("MyApp", [])
+				.component("listBox", {
+					transclude: {
+						header: 'header',
+						footer: 'footer'
+					},
+					template: `<section>
+						<ng-transclude ng-transclude-slot="header"></ng-transclude>
+						<ul>
+						</ul>
+						<ng-transclude ng-transclude-slot="footer"></ng-transclude>
+						{{numOfColors}} colors inside of component
+					</section>`,
+					controller: function($scope) {
 
-			var o = {
-				id: 2,
-				doIt: function() {
-					console.log('did it');
-					console.log(this);
-				}
-			};
+						$scope.numOfColors = 6;
 
-			o.doIt();
+					}
+				})
+				.run(function($rootScope) {
 
-			var t= {
-				doSomething: o.doIt
-			};
+					$rootScope.numOfColors = 3;
 
-			t.doSomething();
-
-
-			// class Person {
-
-			// 	constructor(firstName, lastName) {
-			// 		this.firstName = firstName;
-			// 		this.lastName = lastName;
-			// 	}
-
-			// 	getFullName() {
-			// 		return this.firstName + ' ' + this.lastName;
-			// 	}
-
-
-			// }
-
-			// function Person2(firstName, lastName) {
-			// 	this.firstName = firstName;
-			// 	this.lastName = lastName;
-			// }
-
-			// Person2.prototype.getFullName = function() {
-			// 	return this.firstName + ' ' + this.lastName;
-			// }
-
-			// var person = new Person('Bob','Smith');
-			// var person2 = new Person2('Jill','Jones');
-
-			// console.log(person.getFullName());
-			// console.log(person2.getFullName());
-			// console.log(person.getFullName === person2.getFullName);
-
-			console.dir(person);
-			console.dir(person2);
-
-			//console.log(typeof Person);
-
-			// function outer() {
-
-			// 	//var that = this;
-
-			// 	var inner = () => {
-			// 		console.log(this.id);
-			// 	};
-
-			// 	inner();
-			// }
-
-			// var o = {
-			// 	id:2,
-			// 	outer: outer
-			// };
-
-			// o.outer();
-
-
-			// function doIt() {
-			// 	console.dir(this);
-			// }
-
-			// doIt();
-
-			// window.doIt();
-
-			// var o = {
-			// 	id: 2,
-			// 	doIt: doIt
-			// };
-
-			// o.doIt();
-
-			// console.log(o.doIt === window.doIt);
-
-
-			// var basePerson = {
-			// 	getFullName: function() {
-			// 		return this.firstName + ' ' + this.lastName;
-			// 	}
-			// }
-
-			// var person1 = Object.create(basePerson);
-			// person1.firstName = 'Bob';
-			// person1.lastName = 'Smith';
-
-			// var person2 = Object.create(basePerson);
-			// person2.firstName = 'Jill';
-			// person2.lastName = 'Jones';
-
-			// console.log(person1.getFullName());
-			// console.log(person2.getFullName());
-
-			// console.log(person1.getFullName === person2.getFullName);
-
-			// basePerson.getFullName = function() {
-			// 	return this.lastName + ', ' + this.firstName;
-			// };
-
-			// console.log(person1.getFullName());
-			// console.log(person2.getFullName());			
-
+				});
 
 		</script>
 
